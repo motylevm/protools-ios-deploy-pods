@@ -3,6 +3,14 @@
 #this flag terminates the script if any of the commands fail
 set -e
 
+echo 'Validating branch ...'
+branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+if [ $branch != "master" ]
+then
+    echo 'ERROR: You need to be on branch master to deploy. Aborting ...'
+    exit 1
+fi
+
 echo 'Finding podscpec file ...'
 finding_specs_file="$(find . -type f -depth 1 -name "*.podspec.json")"
 echo "${finding_specs_file}"
@@ -10,7 +18,7 @@ string_to_strip="./"
 finding_specs_file=${finding_specs_file/$string_to_strip/}
 if [ ${#finding_specs_file} == 0 ]
 then 
-	echo 'Podspec file is not found!'
+	echo 'ERROR: Podspec file not found!'
 	exit 1
 fi
 
@@ -38,7 +46,7 @@ tag=${arrIN[1]}
 #check if the tag is the same is version
 if [ $version != $tag ]
 then
-	echo 'Specified version' $version 'is not equal to tag, specified in source[tag]' $tag 'aborting ... '
+	echo 'ERROR: Specified version' $version 'is not equal to tag, specified in source[tag]' $tag 'aborting ... '
 	exit 1
 fi
 
