@@ -52,7 +52,7 @@ fi
 
 #lint current podscpec
 echo 'Linting current podscpec file ...'
-pod lib lint
+pod lib lint --sources='http://stash.se.avito.ru/scm/ma/protools-ios-specs.git,https://github.com/CocoaPods/Specs'
 
 #create the tag and push it
 git tag $version
