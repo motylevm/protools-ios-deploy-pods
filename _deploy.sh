@@ -3,13 +3,16 @@
 #this flag terminates the script if any of the commands fail
 set -e
 
-echo 'Validating branch ...'
+echo 'Validating master branch ...'
 branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 if [ $branch != "master" ]
 then
     echo 'ERROR: You need to be on branch master to deploy. Aborting ...'
     exit 1
 fi
+
+echo 'Pulling from origin/master ...'
+git pull origin master
 
 echo 'Finding podscpec file ...'
 finding_specs_file="$(find . -type f -depth 1 -name "*.podspec.json")"
