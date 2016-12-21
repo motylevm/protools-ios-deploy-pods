@@ -25,7 +25,6 @@ then
 	exit 1
 fi
 
-
 echo 'Checking podscpec file version and tag ...'
 #get current version and the tag
 export PYTHONIOENCODING=utf8
