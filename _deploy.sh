@@ -58,7 +58,7 @@ pod lib lint --sources='http://stash.se.avito.ru/scm/ma/protools-ios-specs.git,h
 
 #create the tag and push it
 git tag -f $version
-git push origin --tags
+git push origin $version
 
 #add protools-ios-specs repo if it is not there
 POD_REPO_OUTPUT="$(pod repo)"
