@@ -1,10 +1,10 @@
 #!/bin/sh
 
 #this flag terminates the script if any of the commands fail
-set -e
+set -e true
 
 #-----------------------------------------------------------------
-echo "Checking that there is only one avito-scm-ma-protools-ios-specs repo in pod repo"
+echo "Checking that there is no more than one avito-scm-ma-protools-ios-specs repo in pod repo (there can be 0)"
 POD_REPO_OUT="$(pod repo)"
 echo "${POD_REPO_OUT}"
 
@@ -88,4 +88,15 @@ case "$POD_REPO_OUTPUT" in
   *) pod repo add avito-scm-ma-protools-ios-specs http://stash.se.avito.ru/scm/ma/protools-ios-specs.git ;;
 esac
 
-pod repo push avito-scm-ma-protools-ios-specs $finding_specs_file
+#-----------------------------------------------------------------
+#in pod repo push confitional raciton to result is needed
+echo "Pushing spec to avito-scm-ma-protools-ios-specs..."
+set -e false
+
+POD_REPO_PUSH_OUTPUT="$(pod repo push avito-scm-ma-protools-ios-specs $finding_specs_file)"
+echo "${POD_REPO_PUSH_OUTPUT}"
+
+case "$POD_REPO_PUSH_OUTPUT" in
+*failed*) echo "pod repo push failed! Dropping avito-scm-ma-protools-ios-specs with corrupted commit. On next deploy try this repo will be added automatically!"; pod repo remove avito-scm-ma-protools-ios-specs ;;
+*) echo "Successfully deployed pod!" ;;
+esac
