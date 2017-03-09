@@ -3,6 +3,20 @@
 #this flag terminates the script if any of the commands fail
 set -e
 
+#-----------------------------------------------------------------
+echo "Checking that there is only one avito-scm-ma-protools-ios-specs repo in pod repo"
+POD_REPO_OUT="$(pod repo)"
+echo "${POD_REPO_OUT}"
+
+needle="protools-ios-specs.git"
+declare -i number_of_occurrences=$(grep -o "$needle" <<< "$POD_REPO_OUT" | wc -l)
+
+if [ "$number_of_occurrences" -gt 1 ]; then
+echo "ERROR: There are more than 1 protools-ios-specs.git repo! Aborting ..."
+exit 1
+fi
+
+#-----------------------------------------------------------------
 echo 'Validating master branch ...'
 branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 if [ $branch != "master" ]
@@ -11,9 +25,11 @@ then
     exit 1
 fi
 
+#-----------------------------------------------------------------
 echo 'Pulling from origin/master ...'
 git pull origin master
 
+#-----------------------------------------------------------------
 echo 'Finding podscpec file ...'
 finding_specs_file="$(find . -type f -depth 1 -name "*.podspec.json")"
 echo "${finding_specs_file}"
@@ -25,6 +41,7 @@ then
 	exit 1
 fi
 
+#-----------------------------------------------------------------
 echo 'Checking podscpec file version and tag ...'
 #get current version and the tag
 export PYTHONIOENCODING=utf8
@@ -52,14 +69,16 @@ then
 	exit 1
 fi
 
-#lint current podscpec
+#-----------------------------------------------------------------
 echo 'Linting current podscpec file ...'
 pod lib lint --sources='http://stash.se.avito.ru/scm/ma/protools-ios-specs.git,https://github.com/CocoaPods/Specs'
 
+#-----------------------------------------------------------------
 #create the tag and push it
 git tag -f $version
 git push origin $version
 
+#-----------------------------------------------------------------
 #add protools-ios-specs repo if it is not there
 POD_REPO_OUTPUT="$(pod repo)"
 echo "${POD_REPO_OUTPUT}"
