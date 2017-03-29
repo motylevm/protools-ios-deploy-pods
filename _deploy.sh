@@ -76,7 +76,7 @@ pod lib lint $* --sources='http://stash.se.avito.ru/scm/ma/protools-ios-specs.gi
 #-----------------------------------------------------------------
 #create the tag and push it
 git tag -f $version
-git push origin $version
+git push -f origin $version
 
 #-----------------------------------------------------------------
 #add protools-ios-specs repo if it is not there
@@ -91,12 +91,11 @@ esac
 #-----------------------------------------------------------------
 #in pod repo push confitional raciton to result is needed
 echo "Pushing spec to avito-scm-ma-protools-ios-specs..."
-set -e false
+set +e
 
-POD_REPO_PUSH_OUTPUT="$(pod repo push avito-scm-ma-protools-ios-specs $finding_specs_file)"
-echo "${POD_REPO_PUSH_OUTPUT}"
-
-case "$POD_REPO_PUSH_OUTPUT" in
-*failed*) echo "pod repo push failed! Dropping avito-scm-ma-protools-ios-specs with corrupted commit. On next deploy try this repo will be added automatically!"; pod repo remove avito-scm-ma-protools-ios-specs ;;
-*) echo "Successfully deployed pod!" ;;
-esac
+if pod repo push avito-scm-ma-protools-ios-specs $finding_specs_file $* ; then
+    echo "Successfully deployed pod!"
+else
+    echo "pod repo push failed! Dropping avito-scm-ma-protools-ios-specs with corrupted commit. On next deploy try this repo will be added automatically!"
+    pod repo remove avito-scm-ma-protools-ios-specs
+fi
