@@ -17,13 +17,15 @@ exit 1
 fi
 
 #-----------------------------------------------------------------
-echo 'Validating master branch ...'
-branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
-if [ $branch != "master" ]
-then
-    echo 'ERROR: You need to be on branch master to deploy. Aborting ...'
-    exit 1
-fi
+echo 'Checking that working directory is clean and switching to master...'
+
+GIT_STATUS_OUTPUT="$(git status)"
+echo "${GIT_STATUS_OUTPUT}"
+
+case "$GIT_STATUS_OUTPUT" in
+*"working tree clean"*) git checkout master ;;
+*) echo 'Working directory tree not clean, abotrting'; exit 1 ;;
+esac
 
 #-----------------------------------------------------------------
 echo 'Pulling from origin/master ...'
