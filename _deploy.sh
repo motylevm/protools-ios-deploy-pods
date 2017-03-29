@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #this flag terminates the script if any of the commands fail
-set -e true
+set -e
 
 #-----------------------------------------------------------------
 echo "Checking that there is no more than one avito-scm-ma-protools-ios-specs repo in pod repo (there can be 0)"
@@ -71,7 +71,7 @@ fi
 
 #-----------------------------------------------------------------
 echo 'Linting current podscpec file ...'
-pod lib lint --sources='http://stash.se.avito.ru/scm/ma/protools-ios-specs.git,https://github.com/CocoaPods/Specs'
+pod lib lint $* --sources='http://stash.se.avito.ru/scm/ma/protools-ios-specs.git,https://github.com/CocoaPods/Specs'
 
 #-----------------------------------------------------------------
 #create the tag and push it
